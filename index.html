@@ -1,0 +1,2246 @@
+<!DOCTYPE html>
+
+<html class="dark scroll-smooth" lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Allmath | Smart Math &amp; Calculator</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Google Fonts: Hind Siliguri (Bengali), Inter (English), JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Hind Siliguri"', "Inter", "sans-serif"],
+              mono: ['"JetBrains Mono"', "monospace"],
+            },
+            animation: {
+              "pop-in": "popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+              shake: "shake 0.45s cubic-bezier(.36,.07,.19,.97) both",
+              "pulse-glow": "pulseGlow 2s infinite",
+              float: "float 6s ease-in-out infinite",
+            },
+            keyframes: {
+              popIn: {
+                "0%": {
+                  opacity: "0",
+                  transform: "translateY(12px) scale(0.95)",
+                },
+                "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
+              },
+              shake: {
+                "10%, 90%": { transform: "translate3d(-2px, 0, 0)" },
+                "20%, 80%": { transform: "translate3d(4px, 0, 0)" },
+                "30%, 50%, 70%": { transform: "translate3d(-6px, 0, 0)" },
+                "40%, 60%": { transform: "translate3d(6px, 0, 0)" },
+              },
+              pulseGlow: {
+                "0%, 100%": { boxShadow: "0 0 0 0 rgba(99, 102, 241, 0.4)" },
+                "50%": { boxShadow: "0 0 22px 4px rgba(99, 102, 241, 0.25)" },
+              },
+              float: {
+                "0%, 100%": { transform: "translateY(0px)" },
+                "50%": { transform: "translateY(-8px)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+<style>
+      /* Adaptive Grid Background */
+      .bg-grid-pattern {
+        background-size: 36px 36px;
+        background-image:
+          linear-gradient(
+            to right,
+            rgba(99, 102, 241, 0.06) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(99, 102, 241, 0.06) 1px,
+            transparent 1px
+          );
+      }
+
+      /* Glassmorphism Cards (Dark & Light adaptive) */
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.78);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+      }
+      .dark .glass-panel {
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(203, 213, 225, 0.7);
+        box-shadow: 0 10px 25px -10px rgba(15, 23, 42, 0.08);
+        transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .dark .glass-card {
+        background: linear-gradient(
+          145deg,
+          rgba(30, 41, 59, 0.55),
+          rgba(15, 23, 42, 0.85)
+        );
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.5);
+      }
+      .glass-card:hover {
+        transform: translateY(-4px) scale(1.01);
+        border-color: rgba(99, 102, 241, 0.55);
+        box-shadow: 0 18px 35px -12px rgba(99, 102, 241, 0.25);
+      }
+
+      /* Tactile Spring Button & Ripple */
+      .btn-spring {
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+          box-shadow 0.25s ease,
+          background-color 0.2s ease;
+      }
+      .btn-spring:hover {
+        transform: translateY(-2px);
+      }
+      .btn-spring:active {
+        transform: scale(0.94);
+      }
+
+      .ripple-span {
+        position: absolute;
+        border-radius: 50%;
+        transform: scale(0);
+        animation: rippleAnim 0.6s linear;
+        background-color: rgba(255, 255, 255, 0.45);
+        pointer-events: none;
+      }
+      @keyframes rippleAnim {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+
+      /* Hide number input arrows */
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+
+      /* Confetti particles */
+      .confetti-piece {
+        position: fixed;
+        width: 9px;
+        height: 9px;
+        border-radius: 2px;
+        pointer-events: none;
+        z-index: 9999;
+        animation: confettiFall 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+          forwards;
+      }
+      @keyframes confettiFall {
+        0% {
+          transform: translate(0, 0) rotate(0deg) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--tx), var(--ty)) rotate(540deg) scale(0.4);
+          opacity: 0;
+        }
+      }
+    
+/* Integrated CalcPro terminal styles */
+
+        /* Animated Cyber Grid Background */
+        .cyber-grid {
+            background-size: 36px 36px;
+            background-image: 
+                linear-gradient(to right, rgba(6, 182, 212, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(6, 182, 212, 0.07) 1px, transparent 1px);
+            animation: gridMove 24s linear infinite;
+        }
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 36px 36px; }
+        }
+
+        /* OLED Scanline Overlay */
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.35) 50%
+            );
+            background-size: 100% 4px;
+        }
+
+        /* Neon Text Glows */
+        .glow-cyan {
+            text-shadow: 0 0 12px rgba(34, 211, 238, 0.65), 0 0 28px rgba(6, 182, 212, 0.3);
+        }
+        .glow-emerald {
+            text-shadow: 0 0 10px rgba(52, 211, 153, 0.6);
+        }
+        .glow-amber {
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
+        }
+
+        /* Custom Scrollbar for Digital Tape */
+        .cyber-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .cyber-scroll::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 9999px;
+        }
+        .cyber-scroll::-webkit-scrollbar-thumb {
+            background: rgba(6, 182, 212, 0.35);
+            border-radius: 9999px;
+        }
+        .cyber-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(6, 182, 212, 0.7);
+        }
+
+        /* Active Key Glow Feedback */
+        .key-active {
+            transform: scale(0.94) !important;
+            border-color: rgba(34, 211, 238, 0.85) !important;
+            box-shadow: 0 0 16px rgba(34, 211, 238, 0.45) inset, 0 0 14px rgba(34, 211, 238, 0.35) !important;
+            color: #22d3ee !important;
+        }
+
+        /* Responsive Fluid OLED Readout */
+        .oled-readout {
+            font-size: clamp(1.65rem, 4vw, 2.35rem);
+            line-height: 1.15;
+        }
+        .oled-readout.compact {
+            font-size: clamp(1.3rem, 3vw, 1.85rem);
+        }
+        .oled-readout.ultra-compact {
+            font-size: clamp(1.05rem, 2.4vw, 1.45rem);
+        }
+
+        /* Hide scrollbars cleanly for horizontal readout overflow */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#060913] dark:text-slate-100 bg-grid-pattern transition-colors duration-300 flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+<!-- Ambient Gradient Orbs -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-indigo-500/15 dark:bg-indigo-600/20 rounded-full blur-[110px]"></div>
+<div class="absolute top-1/3 -right-24 w-96 h-96 bg-sky-400/15 dark:bg-sky-500/15 rounded-full blur-[120px]"></div>
+<div class="absolute -bottom-24 left-1/3 w-96 h-96 bg-emerald-400/15 dark:bg-purple-600/15 rounded-full blur-[120px]"></div>
+</div>
+<!-- TOP NAVBAR -->
+<header class="sticky top-0 z-40 glass-panel border-b border-slate-200/80 dark:border-slate-800/80">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
+<!-- App Brand -->
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-sky-500 flex items-center justify-center text-white font-mono font-bold text-base shadow-lg shadow-indigo-500/30 animate-float">
+            ∑²³
+          </div>
+<div>
+<h1 class="text-base sm:text-lg font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-sky-500 dark:from-indigo-400 dark:to-sky-300 bg-clip-text text-transparent">Allmath</h1>
+<p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 -mt-0.5" id="header-subtitle">নামতা • বর্গ • ঘন • Scientific Calculator</p>
+</div>
+</div>
+<!-- Right Controls: Language Toggle & Dark/Light Mode Toggle -->
+<div class="flex items-center gap-2 sm:gap-3">
+<!-- Bilingual Toggle Pill (বাংলা / EN) -->
+<button class="btn-spring flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 shadow-sm" id="lang-toggle-btn" onclick="toggleLanguage(event)">
+<i class="w-4 h-4 text-indigo-600 dark:text-indigo-400" data-lucide="languages"></i>
+<span id="lang-label">বাংলা / EN</span>
+</button>
+<!-- Dark / Light Theme Toggle Button -->
+<button aria-label="Toggle Theme" class="btn-spring p-2.5 rounded-xl bg-slate-200/80 dark:bg-slate-800/90 text-slate-700 dark:text-amber-300 border border-slate-300/80 dark:border-slate-700 shadow-sm" id="theme-toggle-btn" onclick="toggleTheme(event)">
+<i class="w-4 h-4 hidden dark:block" data-lucide="sun" id="theme-icon-sun"></i>
+<i class="w-4 h-4 block dark:hidden text-indigo-600" data-lucide="moon" id="theme-icon-moon"></i>
+</button>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT CONTAINER -->
+<main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+<!-- NAVIGATION MENU TABS (Namta, Square, Cube, Practice Quiz) -->
+<nav aria-label="Math Modes" class="glass-panel p-1.5 rounded-2xl shadow-lg grid gap-1.5 sm:gap-2 grid-cols-5">
+<button class="btn-spring tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all" id="tab-namta" onclick="switchTab('namta', event)">
+<i class="w-4 h-4 sm:w-5 sm:h-5" data-lucide="grid-3x3"></i>
+<span data-i18n="menu_namta">নামতা</span>
+</button>
+<button class="btn-spring tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all" id="tab-square" onclick="switchTab('square', event)">
+<i class="w-4 h-4 sm:w-5 sm:h-5" data-lucide="superscript"></i>
+<span data-i18n="menu_square">বর্গ (n²)</span>
+</button>
+<button class="btn-spring tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all" id="tab-cube" onclick="switchTab('cube', event)">
+<i class="w-4 h-4 sm:w-5 sm:h-5" data-lucide="box"></i>
+<span data-i18n="menu_cube">ঘন (n³)</span>
+</button>
+<button class="btn-spring tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all" id="tab-quiz" onclick="switchTab('quiz', event)">
+<i class="w-4 h-4 sm:w-5 sm:h-5" data-lucide="brain-circuit"></i>
+<span data-i18n="menu_quiz">কুইজ টেস্ট</span>
+</button>
+<button class="btn-spring tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all" id="tab-calculator" onclick="switchTab('calculator', event)"><i class="w-4 h-4 sm:w-5 sm:h-5" data-lucide="calculator"></i><span>Calculator</span></button></nav><section class="hidden space-y-6 animate-pop-in" id="view-calculator"><main class="w-full max-w-[430px] lg:max-w-[760px] my-auto transition-all duration-300 ease-out flex flex-col lg:flex-row gap-4 lg:gap-5 items-stretch justify-center z-10" id="terminal-wrapper">
+<!-- Primary Calculator Terminal -->
+<section class="w-full lg:w-[420px] shrink-0 transition-all duration-300 bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-cyan-500/25 shadow-[0_0_50px_rgba(6,182,212,0.12)] p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden" id="calc-panel">
+<!-- Subtle Corner HUD Brackets -->
+<div class="pointer-events-none absolute top-2.5 left-2.5 w-3 h-3 border-t-2 border-l-2 border-cyan-400/50 rounded-tl-sm"></div>
+<div class="pointer-events-none absolute top-2.5 right-2.5 w-3 h-3 border-t-2 border-r-2 border-cyan-400/50 rounded-tr-sm"></div>
+<div class="pointer-events-none absolute bottom-2.5 left-2.5 w-3 h-3 border-b-2 border-l-2 border-cyan-400/50 rounded-bl-sm"></div>
+<div class="pointer-events-none absolute bottom-2.5 right-2.5 w-3 h-3 border-b-2 border-r-2 border-cyan-400/50 rounded-br-sm"></div>
+<!-- Terminal Top Bar -->
+<div class="flex items-center justify-between gap-2 mb-3 pb-2.5 border-b border-slate-800/80">
+<div class="flex items-center gap-2">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
+</span>
+<span class="font-cyber text-xs font-bold tracking-[0.18em] text-cyan-400">CALCPRO<span class="text-slate-500 font-mono text-[10px] ml-1">OS</span></span>
+</div>
+<!-- Mode Switcher Pill (STD / SCI) -->
+<div class="flex items-center bg-slate-950/90 p-0.5 rounded-xl border border-slate-800">
+<button class="px-2.5 py-1 rounded-lg font-mono text-[11px] font-semibold tracking-wider transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-[0_0_10px_rgba(34,211,238,0.2)]" id="mode-std-btn">
+                        STD
+                    </button>
+<button class="px-2.5 py-1 rounded-lg font-mono text-[11px] font-semibold tracking-wider transition-all text-slate-400 hover:text-cyan-300 border border-transparent" id="mode-sci-btn">
+                        SCI
+                    </button>
+</div>
+<!-- Utility Controls -->
+<div class="flex items-center gap-1.5">
+<!-- Audio Synth Toggle -->
+<button class="w-8 h-8 rounded-xl bg-slate-950/70 border border-slate-800 hover:border-cyan-500/40 text-cyan-400 flex items-center justify-center transition-all" id="sound-toggle" title="Toggle Synth Audio">
+<i class="fa-solid fa-volume-high text-xs" id="sound-icon"></i>
+</button>
+<!-- Copy Result -->
+<button class="w-8 h-8 rounded-xl bg-slate-950/70 border border-slate-800 hover:border-emerald-500/40 text-slate-400 hover:text-emerald-400 flex items-center justify-center transition-all" id="copy-btn" title="Copy Readout">
+<i class="fa-regular fa-copy text-xs"></i>
+</button>
+<!-- Mobile History Tape Toggle -->
+<button class="lg:hidden w-8 h-8 rounded-xl bg-slate-950/70 border border-slate-800 hover:border-amber-500/40 text-slate-400 hover:text-amber-400 flex items-center justify-center transition-all relative" id="mobile-history-btn" title="Toggle Digital Tape">
+<i class="fa-solid fa-terminal text-xs"></i>
+<span class="hidden absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-400 rounded-full shadow-[0_0_8px_#fbbf24]" id="history-badge"></span>
+</button>
+</div>
+</div>
+<!-- High-Contrast OLED/LCD Digital Display -->
+<div class="relative bg-[#030711] rounded-2xl px-4 py-3 sm:py-3.5 mb-3 border border-cyan-500/30 shadow-[inset_0_0_25px_rgba(6,182,212,0.12)] min-h-[112px] sm:min-h-[122px] flex flex-col justify-between overflow-hidden">
+<!-- Scanlines Effect -->
+<div class="scanlines pointer-events-none absolute inset-0 opacity-60"></div>
+<!-- Top Status Indicators Bar -->
+<div class="flex items-center justify-between z-10 text-[10px] font-mono tracking-widest uppercase">
+<div class="flex items-center gap-2">
+<button class="px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-900/60 transition-colors cursor-pointer" id="angle-toggle" title="Toggle Degrees / Radians">
+                            DEG
+                        </button>
+<span class="text-slate-500" id="status-mode">MODE:STD</span>
+<span class="hidden px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-400/40 text-amber-300 glow-amber" id="mem-indicator">
+                            MEM
+                        </span>
+</div>
+<div class="opacity-0 transition-opacity duration-200 text-emerald-400 glow-emerald font-semibold" id="toast-msg">
+                        COPIED
+                    </div>
+</div>
+<!-- Live Expression Readout -->
+<div class="z-10 font-mono text-xs sm:text-sm text-cyan-400/75 text-right h-5 overflow-x-auto no-scrollbar whitespace-nowrap mt-1.5 tracking-wide" id="expression-display"></div>
+<!-- Primary Segmented/Digital Value Readout -->
+<div class="z-10 font-cyber oled-readout font-bold text-cyan-300 glow-cyan text-right tracking-wider overflow-x-auto no-scrollbar whitespace-nowrap mt-0.5" id="main-display">
+                    0
+                </div>
+</div>
+<!-- Memory Register Strip (Aligned flush with keypad width) -->
+<div class="grid grid-cols-4 gap-2.5 mb-2.5">
+<button class="calc-btn h-8 rounded-xl font-mono text-xs font-semibold bg-slate-950/80 hover:bg-amber-500/10 border border-slate-800 hover:border-amber-500/40 text-slate-400 hover:text-amber-300 transition-all" data-mem="MC">MC</button>
+<button class="calc-btn h-8 rounded-xl font-mono text-xs font-semibold bg-slate-950/80 hover:bg-amber-500/10 border border-slate-800 hover:border-amber-500/40 text-slate-400 hover:text-amber-300 transition-all" data-mem="MR">MR</button>
+<button class="calc-btn h-8 rounded-xl font-mono text-xs font-semibold bg-slate-950/80 hover:bg-amber-500/10 border border-slate-800 hover:border-amber-500/40 text-slate-400 hover:text-amber-300 transition-all" data-mem="M+">M+</button>
+<button class="calc-btn h-8 rounded-xl font-mono text-xs font-semibold bg-slate-950/80 hover:bg-amber-500/10 border border-slate-800 hover:border-amber-500/40 text-slate-400 hover:text-amber-300 transition-all" data-mem="M-">M-</button>
+</div>
+<!-- Keypad Container (Cleanly structured for STD & SCI across mobile and laptop) -->
+<div class="flex flex-col md:flex-row gap-2.5 items-stretch" id="keypad-container">
+<!-- Scientific Keypad Matrix (Hidden in STD Mode) -->
+<div class="hidden grid-cols-3 gap-2 md:w-[235px] shrink-0 border-b md:border-b-0 md:border-r border-slate-800/80 pb-2.5 md:pb-0 md:pr-2.5" id="sci-keypad">
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-medium bg-emerald-950/35 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-400/60 text-emerald-300 transition-all" data-sci="sin">sin</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-medium bg-emerald-950/35 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-400/60 text-emerald-300 transition-all" data-sci="cos">cos</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-medium bg-emerald-950/35 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-400/60 text-emerald-300 transition-all" data-sci="tan">tan</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-medium bg-emerald-950/35 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-400/60 text-emerald-300 transition-all" data-sci="log">log</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-medium bg-emerald-950/35 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-400/60 text-emerald-300 transition-all" data-sci="ln">ln</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-medium bg-emerald-950/35 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-400/60 text-emerald-300 transition-all" data-sci="sqrt">√x</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-medium bg-emerald-950/35 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-400/60 text-emerald-300 transition-all" data-sci="sq">x²</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-medium bg-emerald-950/35 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-400/60 text-emerald-300 transition-all" data-token="^">xʸ</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-medium bg-emerald-950/35 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-400/60 text-emerald-300 transition-all" data-sci="fact">n!</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-semibold bg-slate-950/90 hover:bg-cyan-500/15 border border-slate-800 hover:border-cyan-400/50 text-cyan-300 transition-all" data-token="(">(</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-semibold bg-slate-950/90 hover:bg-cyan-500/15 border border-slate-800 hover:border-cyan-400/50 text-cyan-300 transition-all" data-token=")">)</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-semibold bg-amber-950/35 hover:bg-amber-500/20 border border-amber-500/30 hover:border-amber-400/60 text-amber-300 transition-all" data-const="PI">π</button>
+<button class="calc-btn min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-semibold bg-amber-950/35 hover:bg-amber-500/20 border border-amber-500/30 hover:border-amber-400/60 text-amber-300 transition-all" data-const="E">e</button>
+<button class="calc-btn col-span-2 min-h-[44px] sm:min-h-[48px] rounded-xl font-mono text-xs sm:text-sm font-medium bg-emerald-950/35 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-400/60 text-emerald-300 transition-all" data-sci="inv">1/x</button>
+</div>
+<!-- Standard Core Keypad (Uniform 4-Column Grid) -->
+<div class="flex-1 grid grid-cols-4 gap-2.5">
+<!-- Row 1 -->
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-cyber text-xs sm:text-sm font-bold tracking-wider bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-400 shadow-[0_0_12px_rgba(244,63,94,0.15)] transition-all" data-action="clear">
+                        AC
+                    </button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-base bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/40 text-slate-300 transition-all flex items-center justify-center" data-action="delete" title="Backspace">
+<i class="fa-solid fa-delete-left"></i>
+</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-base sm:text-lg font-semibold bg-slate-900/90 hover:bg-cyan-500/15 border border-slate-700/80 hover:border-cyan-400/50 text-cyan-400 transition-all" data-action="percent">
+                        %
+                    </button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-xl font-semibold bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 transition-all" data-token="÷">
+                        ÷
+                    </button>
+<!-- Row 2 -->
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-lg sm:text-xl font-semibold bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-100 transition-all" data-token="7">7</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-lg sm:text-xl font-semibold bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-100 transition-all" data-token="8">8</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-lg sm:text-xl font-semibold bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-100 transition-all" data-token="9">9</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-xl font-semibold bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 transition-all" data-token="×">
+                        ×
+                    </button>
+<!-- Row 3 -->
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-lg sm:text-xl font-semibold bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-100 transition-all" data-token="4">4</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-lg sm:text-xl font-semibold bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-100 transition-all" data-token="5">5</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-lg sm:text-xl font-semibold bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-100 transition-all" data-token="6">6</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-xl font-semibold bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 transition-all" data-token="-">
+                        −
+                    </button>
+<!-- Row 4 -->
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-lg sm:text-xl font-semibold bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-100 transition-all" data-token="1">1</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-lg sm:text-xl font-semibold bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-100 transition-all" data-token="2">2</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-lg sm:text-xl font-semibold bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-100 transition-all" data-token="3">3</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-xl font-semibold bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 transition-all" data-token="+">
+                        +
+                    </button>
+<!-- Row 5 -->
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-base sm:text-lg font-medium bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-300 transition-all" data-action="negate">
+                        ±
+                    </button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-lg sm:text-xl font-semibold bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-100 transition-all" data-token="0">0</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-mono text-xl font-bold bg-slate-950/85 hover:bg-slate-900 border border-slate-800/90 hover:border-cyan-500/40 text-slate-100 transition-all" data-token=".">.</button>
+<button class="calc-btn min-h-[52px] sm:min-h-[54px] rounded-2xl font-cyber text-lg font-bold bg-gradient-to-br from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.45)] transition-all" data-action="equals">
+                        =
+                    </button>
+</div>
+</div>
+</section>
+<!-- Digital Calculation Tape / History Log (Balanced Fixed Width on Laptop) -->
+<aside class="hidden lg:flex w-full lg:w-[310px] shrink-0 bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-cyan-500/25 shadow-[0_0_40px_rgba(6,182,212,0.08)] p-4 sm:p-5 flex-col justify-between max-h-[420px] lg:max-h-none relative" id="history-panel">
+<div class="flex flex-col h-full overflow-hidden">
+<!-- Tape Header -->
+<div class="flex items-center justify-between pb-2.5 border-b border-slate-800/80">
+<div class="flex items-center gap-2">
+<i class="fa-solid fa-microchip text-emerald-400 text-xs"></i>
+<h2 class="font-cyber text-xs font-bold tracking-widest uppercase text-slate-300">DATA TAPE</h2>
+</div>
+<button class="hidden font-mono text-[11px] text-rose-400 hover:text-rose-300 px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/30 transition-colors" id="clear-history-btn">
+                        PURGE
+                    </button>
+</div>
+<!-- Tape Stream -->
+<div class="mt-3 space-y-2 overflow-y-auto flex-1 pr-1 cyber-scroll min-h-[160px]" id="history-list">
+<div class="h-full flex flex-col items-center justify-center text-center py-8 text-slate-600" id="history-empty">
+<i class="fa-solid fa-wave-square text-2xl mb-2 text-cyan-500/30"></i>
+<p class="font-mono text-xs tracking-wider uppercase text-slate-500">NO TELEMETRY LOGGED</p>
+<p class="font-mono text-[10px] text-slate-600 mt-1">Execute calculation to record</p>
+</div>
+</div>
+</div>
+<!-- Terminal Shortcuts Footer -->
+<div class="pt-2.5 mt-2.5 border-t border-slate-800/80 flex items-center justify-between font-mono text-[10px] text-slate-500">
+<span>KEY_INPUT: <span class="text-emerald-400">ONLINE</span></span>
+<span class="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-cyan-400/80">ESC · ENT · ^</span>
+</div>
+</aside>
+</main></section>
+<!-- =================================================================== -->
+<!-- SECTION 1: NAMTA (MULTIPLICATION TABLES)                            -->
+<!-- =================================================================== -->
+<section class="space-y-6 animate-pop-in" id="view-namta">
+<!-- Control & Input Card -->
+<div class="glass-panel rounded-3xl p-5 sm:p-7 shadow-xl space-y-5">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<span class="inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+<i class="w-3.5 h-3.5" data-lucide="sparkles"></i>
+<span data-i18n="namta_badge">স্মার্ট নামতা জেনারেটর</span>
+</span>
+<h2 class="text-xl sm:text-2xl font-extrabold mt-1" data-i18n="namta_title">
+                যেকোনো সংখ্যার নামতা দেখুন ও যাচাই করুন
+              </h2>
+</div>
+<!-- Memory Mode (Hide Answers) & Range Toggle (1-10 / 1-20) -->
+<div class="flex flex-wrap items-center gap-2">
+<button class="btn-spring px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700" id="namta-range-btn" onclick="toggleNamtaRange(event)">
+<span id="namta-range-label">১ - ১০ পর্যন্ত</span>
+</button>
+<button class="btn-spring flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30" id="namta-hide-btn" onclick="toggleNamtaMemoryMode(event)">
+<i class="w-4 h-4" data-lucide="eye-off"></i>
+<span data-i18n="memory_hide_btn">উত্তর লুকান (প্র্যাকটিস)</span>
+</button>
+</div>
+</div>
+<!-- Custom Number Input + Quick Self-Check Bar -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-2">
+<!-- Generate Table Input -->
+<div class="lg:col-span-5 flex items-center gap-2">
+<div class="relative flex-1">
+<input class="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-900/90 border-2 border-indigo-200 dark:border-slate-700 focus:border-indigo-500 dark:focus:border-indigo-400 text-base sm:text-lg font-mono font-bold outline-none transition" id="namta-input" max="9999" min="1" oninput="generateNamta()" placeholder="সংখ্যা লিখুন (যেমন: 17)" type="number" value="12"/>
+</div>
+<button class="btn-spring px-5 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-lg shadow-indigo-600/25 shrink-0" onclick="generateNamta(event)">
+<span data-i18n="btn_show">দেখুন</span>
+</button>
+</div>
+<!-- Instant Self-Check Calculator for Namta (A × B = ?) -->
+<div class="lg:col-span-7 p-3.5 rounded-2xl bg-indigo-50/70 dark:bg-slate-900/70 border border-indigo-200/70 dark:border-slate-800 flex flex-wrap sm:flex-nowrap items-center gap-2">
+<span class="text-xs font-bold text-indigo-700 dark:text-indigo-300 shrink-0 px-1" data-i18n="quick_check_label">নিজে চেক করুন:</span>
+<input class="w-16 sm:w-20 px-2.5 py-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-center font-mono font-bold text-sm outline-none focus:border-indigo-500" id="namta-check-a" placeholder="১২" type="number"/>
+<span class="font-bold text-slate-400">×</span>
+<input class="w-16 sm:w-20 px-2.5 py-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-center font-mono font-bold text-sm outline-none focus:border-indigo-500" id="namta-check-b" placeholder="৭" type="number"/>
+<span class="font-bold text-slate-400">=</span>
+<input class="w-20 sm:w-24 px-2.5 py-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-center font-mono font-bold text-sm outline-none focus:border-emerald-500" id="namta-check-ans" onkeydown="if (event.key === 'Enter') verifyNamtaCheck(event);" placeholder="?" type="number"/>
+<button class="btn-spring flex-1 sm:flex-none px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md" onclick="verifyNamtaCheck(event)">
+<span data-i18n="btn_check">চেক করুন</span>
+</button>
+</div>
+</div>
+<!-- Feedback Banner for Namta Self-Check -->
+<div class="hidden rounded-2xl px-4 py-3 text-sm font-bold flex items-center justify-between" id="namta-check-feedback"></div>
+<!-- Quick Select Chips (1 to 25) -->
+<div class="pt-1">
+<p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2" data-i18n="quick_pick">
+              দ্রুত বাছাই করুন (১ - ২৫):
+            </p>
+<div class="flex flex-wrap gap-1.5 sm:gap-2" id="namta-chips"></div>
+</div>
+</div>
+<!-- Generated Namta Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4" id="namta-grid"></div>
+</section>
+<!-- =================================================================== -->
+<!-- SECTION 2: SQUARE (বর্গ - n²)                                        -->
+<!-- =================================================================== -->
+<section class="hidden space-y-6 animate-pop-in" id="view-square">
+<div class="glass-panel rounded-3xl p-5 sm:p-7 shadow-xl space-y-6">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<span class="inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">
+<i class="w-3.5 h-3.5" data-lucide="zap"></i>
+<span data-i18n="sq_badge">বর্গ ক্যালকুলেটর ও মেমোরি কার্ড</span>
+</span>
+<h2 class="text-xl sm:text-2xl font-extrabold mt-1" data-i18n="sq_title">
+                যেকোনো সংখ্যার বর্গ (Square) বের করুন ও মনে রাখুন
+              </h2>
+</div>
+<button class="btn-spring self-start flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30" id="sq-hide-btn" onclick="toggleSquareMemoryMode(event)">
+<i class="w-4 h-4" data-lucide="eye-off"></i>
+<span data-i18n="memory_hide_btn">উত্তর লুকান (প্র্যাকটিস)</span>
+</button>
+</div>
+<!-- Interactive Square Input + Self-Test Checker -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+<!-- Live Square Generator Box -->
+<div class="lg:col-span-6 p-5 rounded-2xl bg-gradient-to-br from-sky-500/10 via-indigo-500/10 to-transparent border border-sky-300/40 dark:border-sky-500/20 space-y-4">
+<label class="block text-xs font-bold uppercase tracking-wider text-sky-700 dark:text-sky-300" data-i18n="sq_input_label">সংখ্যা লিখুন (n):</label>
+<div class="flex items-center gap-3">
+<input class="w-full px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border-2 border-sky-300 dark:border-slate-700 focus:border-sky-500 text-xl font-mono font-extrabold outline-none" id="sq-input" oninput="calculateSquare()" type="number" value="15"/>
+<button class="btn-spring px-5 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-lg shadow-sky-600/25 shrink-0" onclick="calculateSquare(event)">
+<span data-i18n="btn_calculate">হিসাব করুন</span>
+</button>
+</div>
+<!-- Live Result Display -->
+<div class="p-4 rounded-2xl bg-white/90 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 flex items-center justify-between" id="sq-result-box">
+<div>
+<div class="text-xs sm:text-sm font-mono text-slate-500 dark:text-slate-400" id="sq-formula">
+                    15² = 15 × 15
+                  </div>
+<div class="text-2xl sm:text-3xl font-mono font-extrabold text-sky-600 dark:text-sky-400 mt-0.5" id="sq-value">
+                    225
+                  </div>
+</div>
+<div class="w-12 h-12 rounded-2xl bg-sky-500/15 text-sky-500 flex items-center justify-center font-mono font-bold text-lg">
+                  n²
+                </div>
+</div>
+</div>
+<!-- Square Self-Test Verification Box -->
+<div class="lg:col-span-6 p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent border border-emerald-300/40 dark:border-emerald-500/20 flex flex-col justify-between space-y-4">
+<div>
+<span class="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300" data-i18n="sq_test_label">নিজেকে যাচাই করুন (বর্গ টেস্ট):</span>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="sq_test_hint">
+                  যেকোনো সংখ্যা ও তার বর্গ লিখে চেক বাটনে চাপ দিন
+                </p>
+</div>
+<div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5">
+<input class="w-full sm:w-1/3 px-3.5 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 font-mono font-bold text-center outline-none focus:border-emerald-500" id="sq-test-num" placeholder="সংখ্যা (18)" type="number"/>
+<span class="font-mono font-bold text-slate-400 hidden sm:inline">² =</span>
+<input class="w-full sm:w-1/3 px-3.5 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 font-mono font-bold text-center outline-none focus:border-emerald-500" id="sq-test-ans" onkeydown="
+                    if (event.key === 'Enter') verifySquareTest(event);
+                  " placeholder="উত্তর (324)" type="number"/>
+<button class="btn-spring w-full sm:w-1/3 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/25" onclick="verifySquareTest(event)">
+<span data-i18n="btn_check">চেক করুন</span>
+</button>
+</div>
+<div class="hidden rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold" id="sq-test-feedback"></div>
+</div>
+</div>
+</div>
+<!-- 1 to 30 Squares Quick-Memorize Reference Grid -->
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<h3 class="text-base sm:text-lg font-extrabold" data-i18n="sq_chart_title">
+              ১ থেকে ৩০ পর্যন্ত বর্গের তালিকা (ট্যাপ করে লুকান/দেখুন)
+            </h3>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3" id="sq-grid"></div>
+</div>
+</section>
+<!-- =================================================================== -->
+<!-- SECTION 3: CUBE (ঘন - n³)                                          -->
+<!-- =================================================================== -->
+<section class="hidden space-y-6 animate-pop-in" id="view-cube">
+<div class="glass-panel rounded-3xl p-5 sm:p-7 shadow-xl space-y-6">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<span class="inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+<i class="w-3.5 h-3.5" data-lucide="box"></i>
+<span data-i18n="cb_badge">ঘন ক্যালকুলেটর ও মেমোরি কার্ড</span>
+</span>
+<h2 class="text-xl sm:text-2xl font-extrabold mt-1" data-i18n="cb_title">
+                যেকোনো সংখ্যার ঘন (Cube) বের করুন ও মনে রাখুন
+              </h2>
+</div>
+<button class="btn-spring self-start flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30" id="cb-hide-btn" onclick="toggleCubeMemoryMode(event)">
+<i class="w-4 h-4" data-lucide="eye-off"></i>
+<span data-i18n="memory_hide_btn">উত্তর লুকান (প্র্যাকটিস)</span>
+</button>
+</div>
+<!-- Interactive Cube Input + Self-Test Checker -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+<!-- Live Cube Generator Box -->
+<div class="lg:col-span-6 p-5 rounded-2xl bg-gradient-to-br from-purple-500/10 via-indigo-500/10 to-transparent border border-purple-300/40 dark:border-purple-500/20 space-y-4">
+<label class="block text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300" data-i18n="cb_input_label">সংখ্যা লিখুন (n):</label>
+<div class="flex items-center gap-3">
+<input class="w-full px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border-2 border-purple-300 dark:border-slate-700 focus:border-purple-500 text-xl font-mono font-extrabold outline-none" id="cb-input" oninput="calculateCube()" type="number" value="12"/>
+<button class="btn-spring px-5 py-3.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm shadow-lg shadow-purple-600/25 shrink-0" onclick="calculateCube(event)">
+<span data-i18n="btn_calculate">হিসাব করুন</span>
+</button>
+</div>
+<!-- Live Result Display -->
+<div class="p-4 rounded-2xl bg-white/90 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 flex items-center justify-between" id="cb-result-box">
+<div>
+<div class="text-xs sm:text-sm font-mono text-slate-500 dark:text-slate-400" id="cb-formula">
+                    12³ = 12 × 12 × 12
+                  </div>
+<div class="text-2xl sm:text-3xl font-mono font-extrabold text-purple-600 dark:text-purple-400 mt-0.5" id="cb-value">
+                    1728
+                  </div>
+</div>
+<div class="w-12 h-12 rounded-2xl bg-purple-500/15 text-purple-500 flex items-center justify-center font-mono font-bold text-lg">
+                  n³
+                </div>
+</div>
+</div>
+<!-- Cube Self-Test Verification Box -->
+<div class="lg:col-span-6 p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent border border-emerald-300/40 dark:border-emerald-500/20 flex flex-col justify-between space-y-4">
+<div>
+<span class="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300" data-i18n="cb_test_label">নিজেকে যাচাই করুন (ঘন টেস্ট):</span>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="cb_test_hint">
+                  যেকোনো সংখ্যা ও তার ঘন লিখে চেক বাটনে চাপ দিন
+                </p>
+</div>
+<div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5">
+<input class="w-full sm:w-1/3 px-3.5 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 font-mono font-bold text-center outline-none focus:border-emerald-500" id="cb-test-num" placeholder="সংখ্যা (9)" type="number"/>
+<span class="font-mono font-bold text-slate-400 hidden sm:inline">³ =</span>
+<input class="w-full sm:w-1/3 px-3.5 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 font-mono font-bold text-center outline-none focus:border-emerald-500" id="cb-test-ans" onkeydown="if (event.key === 'Enter') verifyCubeTest(event);" placeholder="উত্তর (729)" type="number"/>
+<button class="btn-spring w-full sm:w-1/3 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/25" onclick="verifyCubeTest(event)">
+<span data-i18n="btn_check">চেক করুন</span>
+</button>
+</div>
+<div class="hidden rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold" id="cb-test-feedback"></div>
+</div>
+</div>
+</div>
+<!-- 1 to 20 Cubes Quick-Memorize Reference Grid -->
+<div class="space-y-3">
+<h3 class="text-base sm:text-lg font-extrabold" data-i18n="cb_chart_title">
+            ১ থেকে ২০ পর্যন্ত ঘনের তালিকা (ট্যাপ করে লুকান/দেখুন)
+          </h3>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3" id="cb-grid"></div>
+</div>
+</section>
+<!-- =================================================================== -->
+<!-- SECTION 4: INTERACTIVE PRACTICE QUIZ                                -->
+<!-- =================================================================== -->
+<section class="hidden space-y-6 animate-pop-in" id="view-quiz">
+<div class="glass-panel rounded-3xl p-6 sm:p-9 shadow-xl max-w-2xl mx-auto text-center space-y-6">
+<!-- Quiz Mode Filter Pills -->
+<div class="flex flex-wrap items-center justify-center gap-2">
+<button class="btn-spring qcat-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-indigo-600 text-white" id="qcat-all" onclick="setQuizCategory('all', event)">
+<span data-i18n="quiz_all">সব মিশ্রিত</span>
+</button>
+<button class="btn-spring qcat-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300" id="qcat-namta" onclick="setQuizCategory('namta', event)">
+<span data-i18n="menu_namta">নামতা</span>
+</button>
+<button class="btn-spring qcat-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300" id="qcat-square" onclick="setQuizCategory('square', event)">
+<span data-i18n="menu_square">বর্গ (n²)</span>
+</button>
+<button class="btn-spring qcat-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300" id="qcat-cube" onclick="setQuizCategory('cube', event)">
+<span data-i18n="menu_cube">ঘন (n³)</span>
+</button>
+</div>
+<!-- Score & Streak Counter -->
+<div class="flex items-center justify-center gap-6">
+<div class="px-4 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/25">
+<div class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 uppercase" data-i18n="quiz_score">
+                স্কোর
+              </div>
+<div class="text-xl font-mono font-extrabold text-emerald-600 dark:text-emerald-300" id="quiz-score-val">
+                ০
+              </div>
+</div>
+<div class="px-4 py-2 rounded-2xl bg-amber-500/10 border border-amber-500/25">
+<div class="text-[11px] font-bold text-amber-600 dark:text-amber-400 uppercase" data-i18n="quiz_streak">
+                টানা সঠিক
+              </div>
+<div class="text-xl font-mono font-extrabold text-amber-600 dark:text-amber-300" id="quiz-streak-val">
+                ০ 🔥
+              </div>
+</div>
+</div>
+<!-- Question Display Box -->
+<div class="p-6 sm:p-8 rounded-3xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-inner space-y-5" id="quiz-card">
+<span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/15 text-indigo-600 dark:text-indigo-300" id="quiz-type-badge">
+              নামতা চ্যালেঞ্জ
+            </span>
+<div class="text-3xl sm:text-5xl font-mono font-extrabold tracking-tight text-slate-900 dark:text-white" id="quiz-question-text">
+              ১৪ × ৬ = ?
+            </div>
+<div class="max-w-xs mx-auto flex items-center gap-2.5 pt-2">
+<input class="w-full px-4 py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-950 border-2 border-indigo-300 dark:border-slate-700 focus:border-indigo-500 text-center text-2xl font-mono font-extrabold outline-none" id="quiz-answer-input" onkeydown="if (event.key === 'Enter') checkQuizAnswer(event);" placeholder="?" type="number"/>
+<button class="btn-spring px-6 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-sky-500 text-white font-bold text-sm shadow-lg shrink-0" onclick="checkQuizAnswer(event)">
+<span data-i18n="btn_check">চেক</span>
+</button>
+</div>
+<div class="hidden rounded-xl py-2.5 px-4 text-sm font-bold" id="quiz-feedback"></div>
+</div>
+<button class="btn-spring inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-200/80 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs font-bold" onclick="nextQuizQuestion(event)">
+<i class="w-4 h-4" data-lucide="skip-forward"></i>
+<span data-i18n="quiz_next">পরবর্তী প্রশ্ন</span>
+</button>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-slate-200/80 dark:border-slate-800/80 py-5 px-4 text-center">
+<div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+<span data-i18n="footer_tagline">দ্রুত নামতা, বর্গ ও ঘন মনে রাখার আধুনিক ওয়েব অ্যাপ</span>
+<span class="font-mono font-semibold text-indigo-600 dark:text-indigo-400">&lt;/&gt; @rick saha</span>
+</div>
+</footer>
+<!-- =================================================================== -->
+<!-- JAVASCRIPT LOGIC (BILINGUAL, THEME, GENERATORS, ANIMATIONS)         -->
+<!-- =================================================================== -->
+<script>
+      // 1. Dictionary for Bengali ('bn') & English ('en')
+      const I18N = {
+        bn: {
+          subtitle: "নামতা • বর্গ • ঘন মাস্টার",
+          menu_namta: "নামতা",
+          menu_square: "বর্গ (n²)",
+          menu_cube: "ঘন (n³)",
+          menu_quiz: "কুইজ টেস্ট",
+          namta_badge: "স্মার্ট নামতা জেনারেটর",
+          namta_title: "যেকোনো সংখ্যার নামতা দেখুন ও যাচাই করুন",
+          memory_hide_btn: "উত্তর লুকান (প্র্যাকটিস)",
+          memory_show_btn: "সব উত্তর দেখান",
+          btn_show: "দেখুন",
+          quick_check_label: "নিজে চেক করুন:",
+          btn_check: "চেক করুন",
+          quick_pick: "দ্রুত বাছাই করুন (১ - ২৫):",
+          sq_badge: "বর্গ ক্যালকুলেটর ও মেমোরি কার্ড",
+          sq_title: "যেকোনো সংখ্যার বর্গ (Square) বের করুন ও মনে রাখুন",
+          sq_input_label: "সংখ্যা লিখুন (n):",
+          btn_calculate: "হিসাব করুন",
+          sq_test_label: "নিজেকে যাচাই করুন (বর্গ টেস্ট):",
+          sq_test_hint: "যেকোনো সংখ্যা ও তার বর্গ লিখে চেক বাটনে চাপ দিন",
+          sq_chart_title:
+            "১ থেকে ৩০ পর্যন্ত বর্গের তালিকা (কার্ডে ট্যাপ করে লুকান/দেখুন)",
+          cb_badge: "ঘন ক্যালকুলেটর ও মেমোরি কার্ড",
+          cb_title: "যেকোনো সংখ্যার ঘন (Cube) বের করুন ও মনে রাখুন",
+          cb_input_label: "সংখ্যা লিখুন (n):",
+          cb_test_label: "নিজেকে যাচাই করুন (ঘন টেস্ট):",
+          cb_test_hint: "যেকোনো সংখ্যা ও তার ঘন লিখে চেক বাটনে চাপ দিন",
+          cb_chart_title:
+            "১ থেকে ২০ পর্যন্ত ঘনের তালিকা (কার্ডে ট্যাপ করে লুকান/দেখুন)",
+          quiz_all: "সব মিশ্রিত",
+          quiz_score: "স্কোর",
+          quiz_streak: "টানা সঠিক",
+          quiz_next: "পরবর্তী প্রশ্ন",
+          footer_tagline: "দ্রুত নামতা, বর্গ ও ঘন মনে রাখার আধুনিক ওয়েব অ্যাপ",
+          range_10: "১ - ১০ পর্যন্ত",
+          range_20: "১ - ২০ পর্যন্ত",
+          correct_msg: "দারুণ! একদম সঠিক উত্তর 🎉",
+          wrong_msg: "ভুল হয়েছে! সঠিক উত্তর হবে:",
+          enter_both: "অনুগ্রহ করে সংখ্যা এবং আপনার উত্তর লিখুন!",
+          tap_reveal: "দেখতে ট্যাপ করুন",
+        },
+        en: {
+          subtitle: "Tables • Squares • Cubes Trainer",
+          menu_namta: "Tables (Namta)",
+          menu_square: "Squares (n²)",
+          menu_cube: "Cubes (n³)",
+          menu_quiz: "Practice Quiz",
+          namta_badge: "Smart Multiplication Generator",
+          namta_title: "Generate & Self-Test Any Multiplication Table",
+          memory_hide_btn: "Hide Answers (Memory Mode)",
+          memory_show_btn: "Show All Answers",
+          btn_show: "Show",
+          quick_check_label: "Self-Check:",
+          btn_check: "Check",
+          quick_pick: "Quick Select (1 - 25):",
+          sq_badge: "Square Calculator & Memory Cards",
+          sq_title: "Calculate & Memorize Squares (n²) Instantly",
+          sq_input_label: "Enter Number (n):",
+          btn_calculate: "Calculate",
+          sq_test_label: "Self-Test Your Memory (Square):",
+          sq_test_hint: "Enter any number and your guessed square to verify",
+          sq_chart_title:
+            "1 to 30 Squares Reference (Tap any card to hide/reveal)",
+          cb_badge: "Cube Calculator & Memory Cards",
+          cb_title: "Calculate & Memorize Cubes (n³) Instantly",
+          cb_input_label: "Enter Number (n):",
+          cb_test_label: "Self-Test Your Memory (Cube):",
+          cb_test_hint: "Enter any number and your guessed cube to verify",
+          cb_chart_title:
+            "1 to 20 Cubes Reference (Tap any card to hide/reveal)",
+          quiz_all: "Mixed All",
+          quiz_score: "Score",
+          quiz_streak: "Streak",
+          quiz_next: "Next Question",
+          footer_tagline:
+            "Modern Bilingual App to Master Tables, Squares & Cubes",
+          range_10: "1 to 10 Rows",
+          range_20: "1 to 20 Rows",
+          correct_msg: "Awesome! Spot on 🎉",
+          wrong_msg: "Incorrect! The right answer is:",
+          enter_both: "Please enter both the number and your answer!",
+          tap_reveal: "Tap to reveal",
+        },
+      };
+
+      // App State
+      let currentLang = localStorage.getItem("mv_lang") || "bn";
+      let currentTheme = localStorage.getItem("mv_theme") || "dark";
+      let activeTab = "namta";
+      let namtaMaxRows = 10;
+      let hideNamtaAns = false;
+      let hideSquareAns = false;
+      let hideCubeAns = false;
+
+      // Quiz State
+      let quizCategory = "all";
+      let quizScore = 0;
+      let quizStreak = 0;
+      let currentQuiz = { question: "", answer: 0, badge: "" };
+
+      // Convert English digits to Bengali digits when language is 'bn'
+      const BN_DIGITS = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+      function fmtNum(val) {
+        const str = String(val);
+        if (currentLang !== "bn") return str;
+        return str.replace(/\d/g, (d) => BN_DIGITS[Number(d)]);
+      }
+
+      // Button Ripple Micro-interaction
+      function createRipple(event) {
+        if (!event || !event.currentTarget) return;
+        const btn = event.currentTarget;
+        const circle = document.createElement("span");
+        const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+        const radius = diameter / 2;
+        const rect = btn.getBoundingClientRect();
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${event.clientX - rect.left - radius}px`;
+        circle.style.top = `${event.clientY - rect.top - radius}px`;
+        circle.classList.add("ripple-span");
+        const existing = btn.getElementsByClassName("ripple-span")[0];
+        if (existing) existing.remove();
+        btn.appendChild(circle);
+      }
+
+      // Celebration Confetti Effect
+      function triggerConfetti() {
+        const colors = ["#6366f1", "#10b981", "#38bdf8", "#f59e0b", "#ec4899"];
+        for (let i = 0; i < 28; i++) {
+          const piece = document.createElement("div");
+          piece.className = "confetti-piece";
+          piece.style.backgroundColor = colors[i % colors.length];
+          piece.style.left = `${window.innerWidth / 2}px`;
+          piece.style.top = `${window.innerHeight / 2}px`;
+          const angle = (Math.PI * 2 * i) / 28;
+          const velocity = 90 + Math.random() * 140;
+          piece.style.setProperty("--tx", `${Math.cos(angle) * velocity}px`);
+          piece.style.setProperty(
+            "--ty",
+            `${Math.sin(angle) * velocity - 60}px`,
+          );
+          document.body.appendChild(piece);
+          setTimeout(() => piece.remove(), 1150);
+        }
+      }
+
+      // Theme Toggle (Dark / Light)
+      function applyTheme() {
+        const html = document.documentElement;
+        if (currentTheme === "dark") {
+          html.classList.add("dark");
+        } else {
+          html.classList.remove("dark");
+        }
+        localStorage.setItem("mv_theme", currentTheme);
+      }
+
+      function toggleTheme(e) {
+        createRipple(e);
+        currentTheme = currentTheme === "dark" ? "light" : "dark";
+        applyTheme();
+      }
+
+      // Language Toggle (Bengali / English)
+      function applyLanguage() {
+        const dict = I18N[currentLang];
+        document.documentElement.lang = currentLang;
+        document.getElementById("header-subtitle").textContent = dict.subtitle;
+        document.getElementById("lang-label").textContent =
+          currentLang === "bn" ? "English" : "বাংলা";
+
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (dict[key]) el.textContent = dict[key];
+        });
+
+        // Update dynamic toggle labels
+        document.getElementById("namta-range-label").textContent =
+          namtaMaxRows === 10 ? dict.range_10 : dict.range_20;
+        document.querySelector("#namta-hide-btn span").textContent =
+          hideNamtaAns ? dict.memory_show_btn : dict.memory_hide_btn;
+        document.querySelector("#sq-hide-btn span").textContent = hideSquareAns
+          ? dict.memory_show_btn
+          : dict.memory_hide_btn;
+        document.querySelector("#cb-hide-btn span").textContent = hideCubeAns
+          ? dict.memory_show_btn
+          : dict.memory_hide_btn;
+
+        // Re-render grids & numbers in chosen language
+        renderNamtaChips();
+        generateNamta();
+        calculateSquare();
+        renderSquareReference();
+        calculateCube();
+        renderCubeReference();
+        updateQuizDisplay();
+      }
+
+      function toggleLanguage(e) {
+        createRipple(e);
+        currentLang = currentLang === "bn" ? "en" : "bn";
+        localStorage.setItem("mv_lang", currentLang);
+        applyLanguage();
+      }
+
+      // Navigation Menu Tab Switcher
+      function switchTab(tabName, e) {
+        if (e) createRipple(e);
+        activeTab = tabName;
+        const views = ["namta", "square", "cube", "quiz", "calculator"];
+        views.forEach((v) => {
+          const sec = document.getElementById(`view-${v}`);
+          const btn = document.getElementById(`tab-${v}`);
+          if (v === tabName) {
+            sec.classList.remove("hidden");
+            btn.classList.add(
+              "bg-gradient-to-r",
+              "from-indigo-600",
+              "to-violet-600",
+              "text-white",
+              "shadow-lg",
+              "shadow-indigo-500/30",
+            );
+            btn.classList.remove(
+              "text-slate-600",
+              "dark:text-slate-300",
+              "hover:bg-slate-200/60",
+              "dark:hover:bg-slate-800/60",
+            );
+          } else {
+            sec.classList.add("hidden");
+            btn.classList.remove(
+              "bg-gradient-to-r",
+              "from-indigo-600",
+              "to-violet-600",
+              "text-white",
+              "shadow-lg",
+              "shadow-indigo-500/30",
+            );
+            btn.classList.add(
+              "text-slate-600",
+              "dark:text-slate-300",
+              "hover:bg-slate-200/60",
+              "dark:hover:bg-slate-800/60",
+            );
+          }
+        });
+        lucide.createIcons();
+      }
+
+      // =========================================================================
+      // 1. NAMTA LOGIC
+      // =========================================================================
+      function renderNamtaChips() {
+        const container = document.getElementById("namta-chips");
+        const currentVal =
+          Number(document.getElementById("namta-input").value) || 12;
+        let html = "";
+        for (let i = 1; i <= 25; i++) {
+          const activeClass =
+            i === currentVal
+              ? "bg-indigo-600 text-white border-indigo-500 shadow-md scale-105"
+              : "bg-white/80 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-indigo-400";
+          html += `<button onclick="selectNamtaChip(${i}, event)" class="btn-spring px-3 py-1.5 rounded-xl border text-xs font-mono font-bold transition ${activeClass}">${fmtNum(i)}</button>`;
+        }
+        container.innerHTML = html;
+      }
+
+      function selectNamtaChip(num, e) {
+        createRipple(e);
+        document.getElementById("namta-input").value = num;
+        generateNamta();
+        renderNamtaChips();
+      }
+
+      function toggleNamtaRange(e) {
+        createRipple(e);
+        namtaMaxRows = namtaMaxRows === 10 ? 20 : 10;
+        document.getElementById("namta-range-label").textContent =
+          namtaMaxRows === 10
+            ? I18N[currentLang].range_10
+            : I18N[currentLang].range_20;
+        generateNamta();
+      }
+
+      function toggleNamtaMemoryMode(e) {
+        createRipple(e);
+        hideNamtaAns = !hideNamtaAns;
+        const dict = I18N[currentLang];
+        document.querySelector("#namta-hide-btn span").textContent =
+          hideNamtaAns ? dict.memory_show_btn : dict.memory_hide_btn;
+        generateNamta();
+      }
+
+      function generateNamta(e) {
+        if (e) createRipple(e);
+        const raw = document.getElementById("namta-input").value;
+        const num = parseInt(raw, 10);
+        const grid = document.getElementById("namta-grid");
+        if (isNaN(num) || num < 0) {
+          grid.innerHTML = "";
+          return;
+        }
+        renderNamtaChips();
+        let cardsHtml = "";
+        for (let i = 1; i <= namtaMaxRows; i++) {
+          const product = num * i;
+          const delay = (i % 10) * 35;
+          cardsHtml += `
+          <div onclick="revealSingleCard(this, '${fmtNum(product)}')" style="animation-delay: ${delay}ms"
+               class="glass-card rounded-2xl p-4 flex items-center justify-between cursor-pointer animate-pop-in select-none">
+            <div class="font-mono text-base sm:text-lg font-bold text-slate-700 dark:text-slate-200">
+              <span>${fmtNum(num)}</span>
+              <span class="text-indigo-500 mx-1">×</span>
+              <span>${fmtNum(i)}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-slate-400 font-bold">=</span>
+              <span class="ans-badge px-3 py-1 rounded-xl font-mono text-base sm:text-lg font-extrabold ${hideNamtaAns ? "bg-amber-500/20 text-amber-600 dark:text-amber-300 blur-[4px] hover:blur-0 transition" : "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300"}">
+                ${fmtNum(product)}
+              </span>
+            </div>
+          </div>
+        `;
+        }
+        grid.innerHTML = cardsHtml;
+      }
+
+      function revealSingleCard(cardEl, formattedVal) {
+        const badge = cardEl.querySelector(".ans-badge");
+        if (badge) {
+          badge.classList.remove(
+            "blur-[4px]",
+            "bg-amber-500/20",
+            "text-amber-600",
+            "dark:text-amber-300",
+          );
+          badge.classList.add(
+            "bg-emerald-500/20",
+            "text-emerald-600",
+            "dark:text-emerald-300",
+          );
+        }
+      }
+
+      function verifyNamtaCheck(e) {
+        createRipple(e);
+        const a = parseFloat(document.getElementById("namta-check-a").value);
+        const b = parseFloat(document.getElementById("namta-check-b").value);
+        const ans = parseFloat(
+          document.getElementById("namta-check-ans").value,
+        );
+        const fb = document.getElementById("namta-check-feedback");
+        const dict = I18N[currentLang];
+
+        fb.classList.remove(
+          "hidden",
+          "bg-emerald-500/15",
+          "text-emerald-700",
+          "dark:text-emerald-300",
+          "bg-rose-500/15",
+          "text-rose-700",
+          "dark:text-rose-300",
+          "animate-shake",
+        );
+
+        if (isNaN(a) || isNaN(b) || isNaN(ans)) {
+          fb.classList.add(
+            "bg-amber-500/15",
+            "text-amber-700",
+            "dark:text-amber-300",
+          );
+          fb.textContent = dict.enter_both;
+          return;
+        }
+
+        const correct = a * b;
+        if (Math.abs(ans - correct) < 0.0001) {
+          fb.classList.add(
+            "bg-emerald-500/15",
+            "text-emerald-700",
+            "dark:text-emerald-300",
+          );
+          fb.textContent = `${dict.correct_msg} (${fmtNum(a)} × ${fmtNum(b)} = ${fmtNum(correct)})`;
+          triggerConfetti();
+        } else {
+          fb.classList.add(
+            "bg-rose-500/15",
+            "text-rose-700",
+            "dark:text-rose-300",
+            "animate-shake",
+          );
+          fb.textContent = `${dict.wrong_msg} ${fmtNum(correct)}`;
+        }
+      }
+
+      // =========================================================================
+      // 2. SQUARE (বর্গ) LOGIC
+      // =========================================================================
+      function calculateSquare(e) {
+        if (e) createRipple(e);
+        const val = parseFloat(document.getElementById("sq-input").value);
+        const formulaEl = document.getElementById("sq-formula");
+        const resEl = document.getElementById("sq-value");
+        if (isNaN(val)) {
+          formulaEl.textContent = "n² = n × n";
+          resEl.textContent = "—";
+          return;
+        }
+        const sq = Number((val * val).toFixed(4));
+        formulaEl.textContent = `${fmtNum(val)}² = ${fmtNum(val)} × ${fmtNum(val)}`;
+        resEl.textContent = fmtNum(sq);
+      }
+
+      function verifySquareTest(e) {
+        createRipple(e);
+        const n = parseFloat(document.getElementById("sq-test-num").value);
+        const guess = parseFloat(document.getElementById("sq-test-ans").value);
+        const fb = document.getElementById("sq-test-feedback");
+        const dict = I18N[currentLang];
+
+        fb.classList.remove(
+          "hidden",
+          "bg-emerald-500/15",
+          "text-emerald-700",
+          "dark:text-emerald-300",
+          "bg-rose-500/15",
+          "text-rose-700",
+          "dark:text-rose-300",
+          "animate-shake",
+        );
+
+        if (isNaN(n) || isNaN(guess)) {
+          fb.classList.add(
+            "bg-amber-500/15",
+            "text-amber-700",
+            "dark:text-amber-300",
+          );
+          fb.textContent = dict.enter_both;
+          return;
+        }
+
+        const exact = n * n;
+        if (Math.abs(guess - exact) < 0.0001) {
+          fb.classList.add(
+            "bg-emerald-500/15",
+            "text-emerald-700",
+            "dark:text-emerald-300",
+          );
+          fb.textContent = `${dict.correct_msg} (${fmtNum(n)}² = ${fmtNum(exact)})`;
+          triggerConfetti();
+        } else {
+          fb.classList.add(
+            "bg-rose-500/15",
+            "text-rose-700",
+            "dark:text-rose-300",
+            "animate-shake",
+          );
+          fb.textContent = `${dict.wrong_msg} ${fmtNum(exact)}`;
+        }
+      }
+
+      function toggleSquareMemoryMode(e) {
+        createRipple(e);
+        hideSquareAns = !hideSquareAns;
+        const dict = I18N[currentLang];
+        document.querySelector("#sq-hide-btn span").textContent = hideSquareAns
+          ? dict.memory_show_btn
+          : dict.memory_hide_btn;
+        renderSquareReference();
+      }
+
+      function renderSquareReference() {
+        const grid = document.getElementById("sq-grid");
+        let html = "";
+        for (let i = 1; i <= 30; i++) {
+          const sq = i * i;
+          html += `
+          <div onclick="revealSingleCard(this)" class="glass-card rounded-2xl p-3.5 text-center cursor-pointer select-none">
+            <div class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">${fmtNum(i)}²</div>
+            <div class="ans-badge mt-1 font-mono text-lg font-extrabold ${hideSquareAns ? "blur-[5px] text-amber-500" : "text-sky-600 dark:text-sky-400"}">
+              ${fmtNum(sq)}
+            </div>
+          </div>
+        `;
+        }
+        grid.innerHTML = html;
+      }
+
+      // =========================================================================
+      // 3. CUBE (ঘন) LOGIC
+      // =========================================================================
+      function calculateCube(e) {
+        if (e) createRipple(e);
+        const val = parseFloat(document.getElementById("cb-input").value);
+        const formulaEl = document.getElementById("cb-formula");
+        const resEl = document.getElementById("cb-value");
+        if (isNaN(val)) {
+          formulaEl.textContent = "n³ = n × n × n";
+          resEl.textContent = "—";
+          return;
+        }
+        const cb = Number((val * val * val).toFixed(4));
+        formulaEl.textContent = `${fmtNum(val)}³ = ${fmtNum(val)} × ${fmtNum(val)} × ${fmtNum(val)}`;
+        resEl.textContent = fmtNum(cb);
+      }
+
+      function verifyCubeTest(e) {
+        createRipple(e);
+        const n = parseFloat(document.getElementById("cb-test-num").value);
+        const guess = parseFloat(document.getElementById("cb-test-ans").value);
+        const fb = document.getElementById("cb-test-feedback");
+        const dict = I18N[currentLang];
+
+        fb.classList.remove(
+          "hidden",
+          "bg-emerald-500/15",
+          "text-emerald-700",
+          "dark:text-emerald-300",
+          "bg-rose-500/15",
+          "text-rose-700",
+          "dark:text-rose-300",
+          "animate-shake",
+        );
+
+        if (isNaN(n) || isNaN(guess)) {
+          fb.classList.add(
+            "bg-amber-500/15",
+            "text-amber-700",
+            "dark:text-amber-300",
+          );
+          fb.textContent = dict.enter_both;
+          return;
+        }
+
+        const exact = n * n * n;
+        if (Math.abs(guess - exact) < 0.0001) {
+          fb.classList.add(
+            "bg-emerald-500/15",
+            "text-emerald-700",
+            "dark:text-emerald-300",
+          );
+          fb.textContent = `${dict.correct_msg} (${fmtNum(n)}³ = ${fmtNum(exact)})`;
+          triggerConfetti();
+        } else {
+          fb.classList.add(
+            "bg-rose-500/15",
+            "text-rose-700",
+            "dark:text-rose-300",
+            "animate-shake",
+          );
+          fb.textContent = `${dict.wrong_msg} ${fmtNum(exact)}`;
+        }
+      }
+
+      function toggleCubeMemoryMode(e) {
+        createRipple(e);
+        hideCubeAns = !hideCubeAns;
+        const dict = I18N[currentLang];
+        document.querySelector("#cb-hide-btn span").textContent = hideCubeAns
+          ? dict.memory_show_btn
+          : dict.memory_hide_btn;
+        renderCubeReference();
+      }
+
+      function renderCubeReference() {
+        const grid = document.getElementById("cb-grid");
+        let html = "";
+        for (let i = 1; i <= 20; i++) {
+          const cb = i * i * i;
+          html += `
+          <div onclick="revealSingleCard(this)" class="glass-card rounded-2xl p-3.5 text-center cursor-pointer select-none">
+            <div class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">${fmtNum(i)}³</div>
+            <div class="ans-badge mt-1 font-mono text-lg font-extrabold ${hideCubeAns ? "blur-[5px] text-amber-500" : "text-purple-600 dark:text-purple-400"}">
+              ${fmtNum(cb)}
+            </div>
+          </div>
+        `;
+        }
+        grid.innerHTML = html;
+      }
+
+      // =========================================================================
+      // 4. INTERACTIVE PRACTICE QUIZ LOGIC
+      // =========================================================================
+      function setQuizCategory(cat, e) {
+        if (e) createRipple(e);
+        quizCategory = cat;
+        document.querySelectorAll(".qcat-btn").forEach((btn) => {
+          btn.classList.remove("bg-indigo-600", "text-white");
+          btn.classList.add(
+            "bg-slate-200",
+            "dark:bg-slate-800",
+            "text-slate-700",
+            "dark:text-slate-300",
+          );
+        });
+        const activeBtn = document.getElementById(`qcat-${cat}`);
+        activeBtn.classList.add("bg-indigo-600", "text-white");
+        activeBtn.classList.remove(
+          "bg-slate-200",
+          "dark:bg-slate-800",
+          "text-slate-700",
+          "dark:text-slate-300",
+        );
+        nextQuizQuestion();
+      }
+
+      function nextQuizQuestion(e) {
+        if (e) createRipple(e);
+        const types =
+          quizCategory === "all" ? ["namta", "square", "cube"] : [quizCategory];
+        const chosen = types[Math.floor(Math.random() * types.length)];
+
+        if (chosen === "namta") {
+          const a = Math.floor(Math.random() * 19) + 2; // 2..20
+          const b = Math.floor(Math.random() * 10) + 1; // 1..10
+          currentQuiz = { type: "namta", a, b, answer: a * b };
+        } else if (chosen === "square") {
+          const n = Math.floor(Math.random() * 29) + 2; // 2..30
+          currentQuiz = { type: "square", n, answer: n * n };
+        } else {
+          const n = Math.floor(Math.random() * 19) + 2; // 2..20
+          currentQuiz = { type: "cube", n, answer: n * n * n };
+        }
+
+        document.getElementById("quiz-answer-input").value = "";
+        document.getElementById("quiz-feedback").classList.add("hidden");
+        updateQuizDisplay();
+      }
+
+      function updateQuizDisplay() {
+        const badgeEl = document.getElementById("quiz-type-badge");
+        const qEl = document.getElementById("quiz-question-text");
+        document.getElementById("quiz-score-val").textContent =
+          fmtNum(quizScore);
+        document.getElementById("quiz-streak-val").textContent =
+          `${fmtNum(quizStreak)} 🔥`;
+
+        if (currentQuiz.type === "namta") {
+          badgeEl.textContent =
+            currentLang === "bn"
+              ? "নামতা চ্যালেঞ্জ"
+              : "Multiplication Challenge";
+          qEl.textContent = `${fmtNum(currentQuiz.a)} × ${fmtNum(currentQuiz.b)} = ?`;
+        } else if (currentQuiz.type === "square") {
+          badgeEl.textContent =
+            currentLang === "bn"
+              ? "বর্গ (Square) চ্যালেঞ্জ"
+              : "Square (n²) Challenge";
+          qEl.textContent = `${fmtNum(currentQuiz.n)}² = ?`;
+        } else {
+          badgeEl.textContent =
+            currentLang === "bn"
+              ? "ঘন (Cube) চ্যালেঞ্জ"
+              : "Cube (n³) Challenge";
+          qEl.textContent = `${fmtNum(currentQuiz.n)}³ = ?`;
+        }
+      }
+
+      function checkQuizAnswer(e) {
+        createRipple(e);
+        const userAns = parseInt(
+          document.getElementById("quiz-answer-input").value,
+          10,
+        );
+        const fb = document.getElementById("quiz-feedback");
+        const card = document.getElementById("quiz-card");
+        const dict = I18N[currentLang];
+
+        fb.classList.remove(
+          "hidden",
+          "bg-emerald-500/15",
+          "text-emerald-700",
+          "dark:text-emerald-300",
+          "bg-rose-500/15",
+          "text-rose-700",
+          "dark:text-rose-300",
+        );
+        card.classList.remove("animate-shake");
+
+        if (isNaN(userAns)) {
+          fb.classList.add(
+            "bg-amber-500/15",
+            "text-amber-700",
+            "dark:text-amber-300",
+          );
+          fb.textContent = dict.enter_both;
+          return;
+        }
+
+        if (userAns === currentQuiz.answer) {
+          quizScore += 10;
+          quizStreak += 1;
+          fb.classList.add(
+            "bg-emerald-500/15",
+            "text-emerald-700",
+            "dark:text-emerald-300",
+          );
+          fb.textContent = `${dict.correct_msg} (+${fmtNum(10)})`;
+          triggerConfetti();
+          updateQuizDisplay();
+          setTimeout(() => nextQuizQuestion(), 1200);
+        } else {
+          quizStreak = 0;
+          fb.classList.add(
+            "bg-rose-500/15",
+            "text-rose-700",
+            "dark:text-rose-300",
+          );
+          fb.textContent = `${dict.wrong_msg} ${fmtNum(currentQuiz.answer)}`;
+          void card.offsetWidth; // trigger reflow for shake
+          card.classList.add("animate-shake");
+          updateQuizDisplay();
+        }
+      }
+
+      // Initialize Application on Load
+      window.addEventListener("DOMContentLoaded", () => {
+        applyTheme();
+        switchTab("namta");
+        nextQuizQuestion();
+        applyLanguage();
+        lucide.createIcons();
+      });
+    </script>
+<script>
+(function(){
+
+        /**
+         * Web Audio API Synthesizer for Digital Terminal Feedback
+         * Generates crisp, low-latency sci-fi UI clicks and confirmation tones without external files.
+         */
+        class CyberSynth {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) this.ctx = new AudioContext();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            play(type = 'digit') {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                if (type === 'digit') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(780, now);
+                    osc.frequency.exponentialRampToValueAtTime(320, now + 0.035);
+                    gain.gain.setValueAtTime(0.06, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+                    osc.start(now);
+                    osc.stop(now + 0.04);
+                } else if (type === 'op') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(520, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
+                    gain.gain.setValueAtTime(0.07, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.055);
+                } else if (type === 'sci') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(950, now);
+                    osc.frequency.exponentialRampToValueAtTime(1250, now + 0.045);
+                    gain.gain.setValueAtTime(0.05, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'equals') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(580, now);
+                    osc.frequency.setValueAtTime(920, now + 0.045);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'clear') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(110, now + 0.08);
+                    gain.gain.setValueAtTime(0.05, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.085);
+                }
+            }
+        }
+
+        /**
+         * High-Precision Expression & Scientific Calculator Engine
+         */
+        class DigitalTerminal {
+            constructor() {
+                this.expression = '';
+                this.currentResult = '0';
+                this.memory = 0;
+                this.hasMemory = false;
+                this.isDegree = true;
+                this.isScientific = false;
+                this.justEvaluated = false;
+                this.history = [];
+            }
+
+            clear() {
+                this.expression = '';
+                this.currentResult = '0';
+                this.justEvaluated = false;
+            }
+
+            delete() {
+                if (this.justEvaluated || this.currentResult === 'SYNTAX ERR' || this.currentResult === 'MATH ERR') {
+                    this.clear();
+                    return;
+                }
+                if (this.expression.length > 0) {
+                    // Remove trailing function names cleanly if present
+                    const funcs = ['sin(', 'cos(', 'tan(', 'log(', 'ln(', '√('];
+                    let removedFunc = false;
+                    for (const fn of funcs) {
+                        if (this.expression.endsWith(fn)) {
+                            this.expression = this.expression.slice(0, -fn.length);
+                            removedFunc = true;
+                            break;
+                        }
+                    }
+                    if (!removedFunc) {
+                        this.expression = this.expression.slice(0, -1);
+                    }
+                }
+                this.currentResult = this.expression === '' ? '0' : this.expression;
+            }
+
+            appendToken(token) {
+                const isOperator = ['+', '-', '×', '÷', '^'].includes(token);
+
+                if (this.currentResult === 'SYNTAX ERR' || this.currentResult === 'MATH ERR') {
+                    this.expression = '';
+                }
+
+                if (this.justEvaluated) {
+                    if (isOperator) {
+                        // Continue calculation using previous answer
+                        this.expression = this.currentResult + token;
+                    } else {
+                        // Start fresh expression
+                        this.expression = token === '.' ? '0.' : token;
+                    }
+                    this.justEvaluated = false;
+                    this.currentResult = this.expression;
+                    return;
+                }
+
+                // Prevent multiple decimals in the same number segment
+                if (token === '.') {
+                    const segments = this.expression.split(/[\+\-\×\÷\^\(\)]/);
+                    const lastSeg = segments[segments.length - 1];
+                    if (lastSeg.includes('.')) return;
+                    if (lastSeg === '') {
+                        this.expression += '0.';
+                        this.currentResult = this.expression;
+                        return;
+                    }
+                }
+
+                // Replace consecutive operators cleanly
+                if (isOperator && this.expression.length > 0) {
+                    const lastChar = this.expression.slice(-1);
+                    if (['+', '-', '×', '÷', '^'].includes(lastChar)) {
+                        this.expression = this.expression.slice(0, -1) + token;
+                        this.currentResult = this.expression;
+                        return;
+                    }
+                }
+
+                // Prevent leading operator except minus
+                if (isOperator && token !== '-' && this.expression === '') {
+                    this.expression = '0' + token;
+                    this.currentResult = this.expression;
+                    return;
+                }
+
+                // Avoid redundant leading zero
+                if (this.expression === '0' && !isOperator && token !== '.') {
+                    this.expression = token;
+                } else {
+                    this.expression += token;
+                }
+
+                this.currentResult = this.expression;
+            }
+
+            appendConstant(type) {
+                const symbol = type === 'PI' ? 'π' : 'e';
+                if (this.justEvaluated || this.currentResult === 'SYNTAX ERR' || this.currentResult === 'MATH ERR') {
+                    this.expression = symbol;
+                    this.justEvaluated = false;
+                } else {
+                    const lastChar = this.expression.slice(-1);
+                    if (/[0-9\)πe]/.test(lastChar)) {
+                        this.expression += '×' + symbol;
+                    } else {
+                        this.expression += symbol;
+                    }
+                }
+                this.currentResult = this.expression;
+            }
+
+            applyScientific(fn) {
+                if (this.currentResult === 'SYNTAX ERR' || this.currentResult === 'MATH ERR') {
+                    this.clear();
+                }
+
+                if (['sin', 'cos', 'tan', 'log', 'ln'].includes(fn)) {
+                    const prefix = `${fn}(`;
+                    if (this.justEvaluated) {
+                        this.expression = `${prefix}${this.currentResult})`;
+                        this.justEvaluated = false;
+                        this.evaluate();
+                        return;
+                    }
+                    const lastChar = this.expression.slice(-1);
+                    if (/[0-9\)πe]/.test(lastChar)) {
+                        this.expression += '×' + prefix;
+                    } else {
+                        this.expression += prefix;
+                    }
+                    this.currentResult = this.expression;
+                } else if (fn === 'sqrt') {
+                    if (this.justEvaluated) {
+                        this.expression = `√(${this.currentResult})`;
+                        this.justEvaluated = false;
+                        this.evaluate();
+                        return;
+                    }
+                    const lastChar = this.expression.slice(-1);
+                    if (/[0-9\)πe]/.test(lastChar)) {
+                        this.expression += '×√(';
+                    } else {
+                        this.expression += '√(';
+                    }
+                    this.currentResult = this.expression;
+                } else if (fn === 'sq') {
+                    if (this.expression === '' && this.currentResult !== '0') {
+                        this.expression = this.currentResult;
+                    }
+                    if (this.expression !== '') {
+                        this.expression += '^2';
+                        this.justEvaluated = false;
+                        this.currentResult = this.expression;
+                    }
+                } else if (fn === 'inv') {
+                    const target = this.expression || this.currentResult;
+                    if (target && target !== '0') {
+                        this.expression = `1÷(${target})`;
+                        this.evaluate();
+                    }
+                } else if (fn === 'fact') {
+                    // Evaluate current expression first, then compute factorial
+                    if (this.expression !== '') {
+                        this.evaluate();
+                    }
+                    const num = parseFloat(this.currentResult);
+                    if (isNaN(num) || num < 0 || !Number.isInteger(num) || num > 170) {
+                        this.currentResult = 'MATH ERR';
+                        this.expression = '';
+                        this.justEvaluated = true;
+                        return;
+                    }
+                    let res = 1;
+                    for (let i = 2; i <= num; i++) res *= i;
+                    const clean = this.formatNumber(res);
+                    this.addHistory(`${num}!`, clean);
+                    this.currentResult = clean;
+                    this.expression = '';
+                    this.justEvaluated = true;
+                }
+            }
+
+            negate() {
+                if (this.currentResult === '0' || this.currentResult === 'SYNTAX ERR' || this.currentResult === 'MATH ERR') return;
+                if (this.justEvaluated || this.expression === '') {
+                    const val = parseFloat(this.currentResult);
+                    if (!isNaN(val)) {
+                        this.currentResult = this.formatNumber(-val);
+                        this.expression = this.currentResult;
+                    }
+                    return;
+                }
+                if (this.expression.startsWith('-')) {
+                    this.expression = this.expression.slice(1);
+                } else {
+                    this.expression = '-' + this.expression;
+                }
+                this.currentResult = this.expression;
+            }
+
+            percent() {
+                if (this.expression === '' && this.currentResult !== '0') {
+                    const val = parseFloat(this.currentResult);
+                    if (!isNaN(val)) {
+                        this.currentResult = this.formatNumber(val / 100);
+                    }
+                    return;
+                }
+                if (this.expression !== '') {
+                    this.expression += '÷100';
+                    this.evaluate();
+                }
+            }
+
+            // Safe Mathematical Parser & Evaluator
+            evaluate() {
+                const rawExpr = this.expression;
+                if (!rawExpr) return;
+
+                try {
+                    // Auto-close any unclosed parentheses
+                    let balancedExpr = rawExpr;
+                    const openParens = (balancedExpr.match(/\(/g) || []).length;
+                    const closeParens = (balancedExpr.match(/\)/g) || []).length;
+                    if (openParens > closeParens) {
+                        balancedExpr += ')'.repeat(openParens - closeParens);
+                    }
+
+                    // Transform human-readable math tokens into executable JS math
+                    let parsed = balancedExpr
+                        .replace(/×/g, '*')
+                        .replace(/÷/g, '/')
+                        .replace(/\^/g, '**')
+                        .replace(/π/g, 'Math.PI')
+                        .replace(/\be\b/g, 'Math.E')
+                        .replace(/√\(/g, 'Math.sqrt(')
+                        .replace(/log\(/g, 'Math.log10(')
+                        .replace(/ln\(/g, 'Math.log(');
+
+                    // Handle implicit multiplication e.g., 2(3) or 2Math.PI
+                    parsed = parsed
+                        .replace(/(\d)(Math\.PI|Math\.E|Math\.sqrt|Math\.log10|Math\.log|sin\(|cos\(|tan\(|\()/g, '$1*$2')
+                        .replace(/(\))(\d|Math\.PI|Math\.E|\()/g, '$1*$2');
+
+                    // Trigonometric helpers respecting DEG / RAD
+                    const toRad = (deg) => (deg * Math.PI) / 180;
+                    const sin = (x) => {
+                        const val = this.isDegree ? Math.sin(toRad(x)) : Math.sin(x);
+                        return Math.abs(val) < 1e-12 ? 0 : val;
+                    };
+                    const cos = (x) => {
+                        const val = this.isDegree ? Math.cos(toRad(x)) : Math.cos(x);
+                        return Math.abs(val) < 1e-12 ? 0 : val;
+                    };
+                    const tan = (x) => {
+                        if (this.isDegree && Math.abs(x % 180) === 90) throw new Error('Undefined');
+                        const val = this.isDegree ? Math.tan(toRad(x)) : Math.tan(x);
+                        return Math.abs(val) < 1e-12 ? 0 : val;
+                    };
+
+                    // Evaluate securely inside scoped Function
+                    const computeFn = new Function('sin', 'cos', 'tan', `return (${parsed});`);
+                    const result = computeFn(sin, cos, tan);
+
+                    if (typeof result !== 'number' || isNaN(result)) {
+                        this.currentResult = 'SYNTAX ERR';
+                    } else if (!isFinite(result)) {
+                        this.currentResult = 'MATH ERR';
+                    } else {
+                        const formatted = this.formatNumber(result);
+                        this.addHistory(balancedExpr, formatted);
+                        this.currentResult = formatted;
+                    }
+
+                    this.expression = balancedExpr;
+                    this.justEvaluated = true;
+                } catch (err) {
+                    this.currentResult = 'SYNTAX ERR';
+                    this.justEvaluated = true;
+                }
+            }
+
+            formatNumber(num) {
+                const rounded = Math.round((num + Number.EPSILON) * 1e11) / 1e11;
+                if (Math.abs(rounded) >= 1e13 || (Math.abs(rounded) > 0 && Math.abs(rounded) < 1e-9)) {
+                    return rounded.toExponential(6).replace(/\.?0+e/, 'e');
+                }
+                return rounded.toString();
+            }
+
+            // Memory Operations
+            handleMemory(action) {
+                // If expression is pending, evaluate numeric value safely
+                let currentVal = parseFloat(this.currentResult);
+                if (isNaN(currentVal)) return;
+
+                switch (action) {
+                    case 'MC':
+                        this.memory = 0;
+                        this.hasMemory = false;
+                        showToast('MEM CLEARED');
+                        break;
+                    case 'MR':
+                        if (this.justEvaluated || this.expression === '') {
+                            this.expression = this.memory.toString();
+                        } else {
+                            this.expression += this.memory.toString();
+                        }
+                        this.currentResult = this.expression;
+                        this.justEvaluated = false;
+                        showToast(`MEM: ${this.memory}`);
+                        break;
+                    case 'M+':
+                        this.memory = Math.round(((this.memory + currentVal) + Number.EPSILON) * 1e11) / 1e11;
+                        this.hasMemory = true;
+                        this.justEvaluated = true;
+                        showToast(`M+ [${this.memory}]`);
+                        break;
+                    case 'M-':
+                        this.memory = Math.round(((this.memory - currentVal) + Number.EPSILON) * 1e11) / 1e11;
+                        this.hasMemory = true;
+                        this.justEvaluated = true;
+                        showToast(`M- [${this.memory}]`);
+                        break;
+                }
+            }
+
+            addHistory(expr, res) {
+                this.history.unshift({ expr, res, time: new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }) });
+                if (this.history.length > 40) this.history.pop();
+                renderHistory();
+            }
+
+            clearHistory() {
+                this.history = [];
+                renderHistory();
+            }
+        }
+
+        // Instantiate Core Modules
+        const synth = new CyberSynth();
+        const terminal = new DigitalTerminal();
+
+        // DOM References
+        const mainDisplayEl = document.getElementById('main-display');
+        const expressionDisplayEl = document.getElementById('expression-display');
+        const memIndicatorEl = document.getElementById('mem-indicator');
+        const angleToggleBtn = document.getElementById('angle-toggle');
+        const statusModeEl = document.getElementById('status-mode');
+        const toastMsgEl = document.getElementById('toast-msg');
+
+        const terminalWrapper = document.getElementById('terminal-wrapper');
+        const calcPanel = document.getElementById('calc-panel');
+        const sciKeypadEl = document.getElementById('sci-keypad');
+        const modeStdBtn = document.getElementById('mode-std-btn');
+        const modeSciBtn = document.getElementById('mode-sci-btn');
+
+        const historyListEl = document.getElementById('history-list');
+        const historyEmptyEl = document.getElementById('history-empty');
+        const clearHistoryBtn = document.getElementById('clear-history-btn');
+        const historyBadge = document.getElementById('history-badge');
+
+        // Refresh OLED Display
+        function updateUI() {
+            // Format commas for pure standalone numbers, otherwise show expression cleanly
+            let displayStr = terminal.currentResult;
+            if (/^-?\d+(\.\d+)?$/.test(displayStr)) {
+                const parts = displayStr.split('.');
+                parts[0] = parseInt(parts[0], 10).toLocaleString('en-US');
+                displayStr = parts.join('.');
+            }
+
+            mainDisplayEl.innerText = displayStr;
+
+            // Dynamic fluid scaling classes for long numbers
+            const len = displayStr.length;
+            mainDisplayEl.classList.remove('compact', 'ultra-compact');
+            if (len > 15) {
+                mainDisplayEl.classList.add('ultra-compact');
+            } else if (len > 11) {
+                mainDisplayEl.classList.add('compact');
+            }
+
+            // Expression readout
+            if (terminal.justEvaluated && terminal.expression) {
+                expressionDisplayEl.innerText = `${terminal.expression} =`;
+            } else {
+                expressionDisplayEl.innerText = terminal.expression;
+            }
+
+            // Memory badge
+            if (terminal.hasMemory) {
+                memIndicatorEl.classList.remove('hidden');
+            } else {
+                memIndicatorEl.classList.add('hidden');
+            }
+        }
+
+        // Toast Notification
+        let toastTimer;
+        function showToast(text) {
+            toastMsgEl.innerText = text;
+            toastMsgEl.classList.remove('opacity-0');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toastMsgEl.classList.add('opacity-0');
+            }, 1400);
+        }
+
+        // Render Digital Calculation Tape
+        function renderHistory() {
+            historyListEl.querySelectorAll('.tape-entry').forEach(el => el.remove());
+
+            if (terminal.history.length === 0) {
+                historyEmptyEl.classList.remove('hidden');
+                clearHistoryBtn.classList.add('hidden');
+                historyBadge.classList.add('hidden');
+                return;
+            }
+
+            historyEmptyEl.classList.add('hidden');
+            clearHistoryBtn.classList.remove('hidden');
+            historyBadge.classList.remove('hidden');
+
+            terminal.history.forEach((item) => {
+                const entry = document.createElement('div');
+                entry.className = 'tape-entry p-2.5 rounded-xl bg-slate-950/80 hover:bg-cyan-950/30 border border-slate-800/90 hover:border-cyan-500/40 cursor-pointer transition-all group';
+                entry.title = 'Click to recall value';
+                entry.innerHTML = `
+                    <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 mb-1">
+                        <span>[${item.time}]</span>
+                        <span class="opacity-0 group-hover:opacity-100 text-cyan-400 transition-opacity">RECALL ↵</span>
+                    </div>
+                    <div class="font-mono text-xs text-slate-400 text-right truncate">${item.expr} =</div>
+                    <div class="font-cyber text-sm font-bold text-cyan-300 group-hover:text-emerald-300 text-right truncate mt-0.5">${item.res}</div>
+                `;
+                entry.addEventListener('click', () => {
+                    synth.play('sci');
+                    terminal.currentResult = item.res;
+                    terminal.expression = item.res;
+                    terminal.justEvaluated = true;
+                    updateUI();
+                    showToast('RECALLED');
+                });
+                historyListEl.appendChild(entry);
+            });
+        }
+
+        // Mode Switcher (Standard vs Scientific)
+        function setMode(scientific) {
+            synth.play('op');
+            terminal.isScientific = scientific;
+            if (scientific) {
+                sciKeypadEl.classList.remove('hidden');
+                sciKeypadEl.classList.add('grid');
+                calcPanel.classList.remove('lg:w-[420px]');
+                calcPanel.classList.add('lg:w-[660px]');
+                terminalWrapper.classList.remove('lg:max-w-[760px]');
+                terminalWrapper.classList.add('lg:max-w-[1000px]');
+                statusModeEl.innerText = 'MODE:SCI';
+                statusModeEl.classList.replace('text-slate-500', 'text-emerald-400');
+
+                modeSciBtn.className = 'px-2.5 py-1 rounded-lg font-mono text-[11px] font-semibold tracking-wider transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 shadow-[0_0_10px_rgba(52,211,153,0.25)]';
+                modeStdBtn.className = 'px-2.5 py-1 rounded-lg font-mono text-[11px] font-semibold tracking-wider transition-all text-slate-400 hover:text-cyan-300 border border-transparent';
+            } else {
+                sciKeypadEl.classList.add('hidden');
+                sciKeypadEl.classList.remove('grid');
+                calcPanel.classList.remove('lg:w-[660px]');
+                calcPanel.classList.add('lg:w-[420px]');
+                terminalWrapper.classList.remove('lg:max-w-[1000px]');
+                terminalWrapper.classList.add('lg:max-w-[760px]');
+                statusModeEl.innerText = 'MODE:STD';
+                statusModeEl.classList.replace('text-emerald-400', 'text-slate-500');
+
+                modeStdBtn.className = 'px-2.5 py-1 rounded-lg font-mono text-[11px] font-semibold tracking-wider transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-[0_0_10px_rgba(34,211,238,0.2)]';
+                modeSciBtn.className = 'px-2.5 py-1 rounded-lg font-mono text-[11px] font-semibold tracking-wider transition-all text-slate-400 hover:text-emerald-300 border border-transparent';
+            }
+        }
+
+        modeStdBtn.addEventListener('click', () => setMode(false));
+        modeSciBtn.addEventListener('click', () => setMode(true));
+
+        // DEG / RAD Toggle
+        angleToggleBtn.addEventListener('click', () => {
+            synth.play('sci');
+            terminal.isDegree = !terminal.isDegree;
+            angleToggleBtn.innerText = terminal.isDegree ? 'DEG' : 'RAD';
+            showToast(terminal.isDegree ? 'DEGREES' : 'RADIANS');
+        });
+
+        // Sound Mute/Unmute Toggle
+        const soundToggleBtn = document.getElementById('sound-toggle');
+        const soundIcon = document.getElementById('sound-icon');
+        soundToggleBtn.addEventListener('click', () => {
+            synth.muted = !synth.muted;
+            if (synth.muted) {
+                soundIcon.className = 'fa-solid fa-volume-xmark text-xs text-slate-500';
+                showToast('AUDIO MUTED');
+            } else {
+                soundIcon.className = 'fa-solid fa-volume-high text-xs text-cyan-400';
+                synth.play('sci');
+                showToast('AUDIO ONLINE');
+            }
+        });
+
+        // Copy to Clipboard
+        document.getElementById('copy-btn').addEventListener('click', () => {
+            synth.play('sci');
+            const temp = document.createElement('input');
+            temp.value = terminal.currentResult;
+            document.body.appendChild(temp);
+            temp.select();
+            try {
+                document.execCommand('copy');
+                showToast('COPIED TO CLIPBOARD');
+            } catch (e) {
+                showToast('COPY FAILED');
+            }
+            document.body.removeChild(temp);
+        });
+
+        // Mobile Tape Toggle
+        const mobileHistoryBtn = document.getElementById('mobile-history-btn');
+        const historyPanel = document.getElementById('history-panel');
+        mobileHistoryBtn.addEventListener('click', () => {
+            synth.play('op');
+            historyPanel.classList.toggle('hidden');
+            historyPanel.classList.toggle('flex');
+        });
+
+        clearHistoryBtn.addEventListener('click', () => {
+            synth.play('clear');
+            terminal.clearHistory();
+            showToast('TAPE PURGED');
+        });
+
+        // Token & Operator Buttons
+        document.querySelectorAll('[data-token]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tok = btn.dataset.token;
+                const isOp = ['+', '-', '×', '÷', '^', '(', ')'].includes(tok);
+                synth.play(isOp ? 'op' : 'digit');
+                terminal.appendToken(tok);
+                updateUI();
+            });
+        });
+
+        // Scientific Function Buttons
+        document.querySelectorAll('[data-sci]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                synth.play('sci');
+                terminal.applyScientific(btn.dataset.sci);
+                updateUI();
+            });
+        });
+
+        // Constants (PI, E)
+        document.querySelectorAll('[data-const]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                synth.play('sci');
+                terminal.appendConstant(btn.dataset.const);
+                updateUI();
+            });
+        });
+
+        // Memory Keys
+        document.querySelectorAll('[data-mem]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                synth.play('sci');
+                terminal.handleMemory(btn.dataset.mem);
+                updateUI();
+            });
+        });
+
+        // Core Actions
+        document.querySelector('[data-action="clear"]').addEventListener('click', () => {
+            synth.play('clear');
+            terminal.clear();
+            updateUI();
+        });
+
+        document.querySelector('[data-action="delete"]').addEventListener('click', () => {
+            synth.play('clear');
+            terminal.delete();
+            updateUI();
+        });
+
+        document.querySelector('[data-action="percent"]').addEventListener('click', () => {
+            synth.play('op');
+            terminal.percent();
+            updateUI();
+        });
+
+        document.querySelector('[data-action="negate"]').addEventListener('click', () => {
+            synth.play('op');
+            terminal.negate();
+            updateUI();
+        });
+
+        document.querySelector('[data-action="equals"]').addEventListener('click', () => {
+            synth.play('equals');
+            terminal.evaluate();
+            updateUI();
+        });
+
+        // Visual Neon Glow Feedback for Keyboard Presses
+        function flashKey(selector) {
+            const el = document.querySelector(selector);
+            if (!el) return;
+            el.classList.add('key-active');
+            setTimeout(() => el.classList.remove('key-active'), 140);
+        }
+
+        // Full Keyboard Input Support
+        window.addEventListener('keydown', (e) => {
+            if (e.key === '/' || e.key === 'Enter') e.preventDefault();
+
+            if ((e.key >= '0' && e.key <= '9') || e.key === '.' || e.key === '(' || e.key === ')') {
+                const isParen = e.key === '(' || e.key === ')';
+                synth.play(isParen ? 'op' : 'digit');
+                terminal.appendToken(e.key);
+                updateUI();
+                flashKey(`[data-token="${e.key}"]`);
+            } else if (e.key === '+' || e.key === '-' || e.key === '^') {
+                synth.play('op');
+                terminal.appendToken(e.key);
+                updateUI();
+                flashKey(`[data-token="${e.key}"]`);
+            } else if (e.key === '*') {
+                synth.play('op');
+                terminal.appendToken('×');
+                updateUI();
+                flashKey(`[data-token="×"]`);
+            } else if (e.key === '/') {
+                synth.play('op');
+                terminal.appendToken('÷');
+                updateUI();
+                flashKey(`[data-token="÷"]`);
+            } else if (e.key === '%') {
+                synth.play('op');
+                terminal.percent();
+                updateUI();
+                flashKey(`[data-action="percent"]`);
+            } else if (e.key === 'Enter' || e.key === '=') {
+                synth.play('equals');
+                terminal.evaluate();
+                updateUI();
+                flashKey(`[data-action="equals"]`);
+            } else if (e.key === 'Backspace') {
+                synth.play('clear');
+                terminal.delete();
+                updateUI();
+                flashKey(`[data-action="delete"]`);
+            } else if (e.key === 'Escape' || e.key === 'Delete') {
+                synth.play('clear');
+                terminal.clear();
+                updateUI();
+                flashKey(`[data-action="clear"]`);
+            }
+        });
+    
+})();
+</script></body>
+</html>
